@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+# from matplotlib.widgets import Slider
 
 fig=plt.figure()
 ax=fig.add_subplot(111)
@@ -12,11 +13,11 @@ def draw_reflector_model(ax,solar_zenith,reflector_length,reflector_angle,window
         ax.plot([x_pos,light_left_lim],[y_pos,light_slope*(light_left_lim-x_pos)+y_pos],color='orange',label='Sunlight In',linestyle='-')
     
     def draw_vertical_line(x_pos,y_pos):
-        line_length=1
+        line_length=reflector_length/4
         ax.plot([x_pos,x_pos],[y_pos,y_pos+line_length],color='black',label='Vertical Line',linestyle='-.')
 
     def draw_reflection_axis(x_pos,y_pos):
-        line_length=1
+        line_length=reflector_length/4
         ax.plot([x_pos,x_pos+line_length*np.sin(reflector_angle*np.pi/180)],[y_pos,y_pos+line_length*np.cos(reflector_angle*np.pi/180)],color='black',label='Reflection Axis',linestyle=':')
 
     def draw_window(height):
@@ -57,6 +58,22 @@ def draw_reflector_model(ax,solar_zenith,reflector_length,reflector_angle,window
         draw_light_in(reflector_end_x,reflector_end_y)
         draw_reflection_axis(reflector_end_x,reflector_end_y)
 
+    # axcolor = 'lightgoldenrodyellow'
+    # ax_zenith=plt.axes([0.25, 0.1, 0.65, 0.03], facecolor=axcolor)
+    # ax_ref_len=plt.axes([0.25, 0.1, 0.65, 0.03], facecolor=axcolor)
+    # ax_ref_ang=plt.axes([0.25, 0.1, 0.65, 0.03], facecolor=axcolor)
+    # ax_win_ht=plt.axes([0.25, 0.1, 0.65, 0.03], facecolor=axcolor)
+
+    # s_zenith=Slider(ax_zenith,'Solar Zenith',0,90,valinit=solar_zenith,valstep=0.1)
+    # s_ref_len=Slider(ax_ref_len,'Reflector Length',0,10,valinit=reflector_length,valstep=0.1)
+    # s_ref_ang=Slider(ax_ref_ang,'Reflector Angle',0,90,valinit=reflector_angle,valstep=0.1)
+    # s_win_ht=Slider(ax_win_ht,'Window Height',0,10,valinit=window_height,valstep=0.1)
+
+    # def update(val):
+    #     zenith=s_zenith.val
+    #     ref_len=s_ref_len.val
+    #     ref_angle=s_ref_ang.val
+    #     win_ht=s_win_ht.val
 
 draw_reflector_model(ax=ax,
                     solar_zenith=30,
