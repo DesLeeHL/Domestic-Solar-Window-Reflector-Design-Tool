@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.lines import Line2D
 
 fig=plt.figure()
 ax=fig.add_subplot(111)
