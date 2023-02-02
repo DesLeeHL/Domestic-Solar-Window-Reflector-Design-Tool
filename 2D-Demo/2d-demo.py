@@ -79,7 +79,7 @@ draw_reflector_model(ax=ax,
                     solar_zenith=30,
                     reflector_length=8,
                     reflector_angle=20,
-                    window_height=6)
+                    window_height=8)
 
 ax.set_aspect('equal')
 plt.legend()
