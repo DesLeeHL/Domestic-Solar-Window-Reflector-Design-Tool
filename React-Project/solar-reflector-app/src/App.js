@@ -12,26 +12,7 @@ function App() {
       </section>
       <section className='App-body'>
         {/* Canvas 1 */}
-        <Canvas>
-          {/* <OrthographicCamera /> */}
-          <pointLight position={[10, 10, 10]} />
-          <ambientLight />
-          <Window position={[-1.2, 0, 0]} />
-          <OrbitControls />
-
-          <OrthographicCamera
-            makeDefault
-            zoom={1}
-            top={500}
-            bottom={-500}
-            left={500}
-            right={-500}
-            near={1}
-            far={2000}
-            position={[10, 10, 100]}
-          />
-        </Canvas>
-
+        <Window/>
         {/* Canvas 2 */}
         {/* <Canvas>
           <pointLight position={[10, 10, 10]} />
