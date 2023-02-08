@@ -2,7 +2,7 @@ import "./App.css";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, OrthographicCamera } from "@react-three/drei";
 import Cylinder3d from "./component/Cylinder3d";
-import Window from "./component/Window";
+import Model from "./component/Model";
 
 function App() {
   return (
@@ -12,7 +12,7 @@ function App() {
       </section>
       <section className='App-body'>
         {/* Canvas 1 */}
-        <Window/>
+        <Model/>
         {/* Canvas 2 */}
         {/* <Canvas>
           <pointLight position={[10, 10, 10]} />

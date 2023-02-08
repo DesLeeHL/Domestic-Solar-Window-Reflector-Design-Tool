@@ -2,8 +2,9 @@ import React, { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, OrthographicCamera } from "@react-three/drei";
+import { DoubleSide } from 'three';
 
-function Window(props) {
+function Model(props) {
     // This reference gives us direct access to the THREE.Mesh object
     const ref = useRef();
     // Hold state for hovered and clicked events
@@ -48,7 +49,7 @@ function Window(props) {
                     <mesh position={[0, -height / 2,0]} rotation={[-angle*(Math.PI / 180), 0, 0]}>
                         <mesh position={[0,mirrorLength/2,0]}>
                             <planeGeometry args={[width, mirrorLength, 2]} />
-                            <meshStandardMaterial />
+                            <meshStandardMaterial side={DoubleSide}/>
                         </mesh>
                     </mesh>
 
@@ -69,7 +70,7 @@ function Window(props) {
             </Canvas>
             <div style={{ display: "flex", flexDirection: "column" }}>
                 <div style={{ display: "flex", alignItems: "center" }}>
-                    <label htmlFor="width-slider">Window Width:</label>
+                    <label htmlFor="width-slider">Model Width:</label>
                     <input
                         id="width-slider"
                         type="range"
@@ -82,7 +83,7 @@ function Window(props) {
                     <span>{width}</span>
                 </div>
                 <div style={{ display: "flex", alignItems: "center" }}>
-                    <label htmlFor="height-slider">Window Height:</label>
+                    <label htmlFor="height-slider">Model Height:</label>
                     <input
                         id="height-slider"
                         type="range"
@@ -128,4 +129,4 @@ function Window(props) {
     );
 }
 
-export default Window;
+export default Model;
