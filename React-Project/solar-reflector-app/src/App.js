@@ -1,8 +1,8 @@
 import "./App.css";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, OrthographicCamera } from "@react-three/drei";
-import Cylinder3d from "./component/Cylinder3d";
-import Model from "./component/Model";
+import Cylinder3d from "./3D-Components/Cylinder3d";
+import ThreeMain from "./three-main/ThreeMain";
 
 function App() {
   return (
@@ -12,7 +12,7 @@ function App() {
       </section>
       <section className='App-body'>
         {/* Canvas 1 */}
-        <Model/>
+        <ThreeMain/>
         {/* Canvas 2 */}
         {/* <Canvas>
           <pointLight position={[10, 10, 10]} />
