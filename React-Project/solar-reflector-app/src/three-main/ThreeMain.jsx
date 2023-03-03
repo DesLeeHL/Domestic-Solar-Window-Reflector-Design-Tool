@@ -1,4 +1,4 @@
-import React, { useRef,useEffect, useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Canvas } from "@react-three/fiber";
 // import { OrbitControls, OrthographicCamera } from "@react-three/drei";
@@ -69,13 +69,13 @@ function ThreeObjects() {
     );
     reflectorGroup.position.setY(-height / 2);
     reflectorGroup.rotation.setX(-angle * (Math.PI / 180));
-    return {windowMesh, reflectorGroup}
+    return { windowMesh, reflectorGroup }
 }
 
-const {windowMesh, reflectorGroup} = ThreeObjects();
+const { windowMesh, reflectorGroup } = ThreeObjects();
 function easeOutCirc(x) {
     return Math.sqrt(1 - Math.pow(x - 1, 4));
-  }
+}
 
 const TheScene = () => {
     const refContainer = useRef();
@@ -182,14 +182,14 @@ const TheScene = () => {
 // sunlight.name = 'sunlight';
 
 
-export default function ThreeMain(){
-    return(
+export default function ThreeMain() {
+    return (
         <div>
             <p>Click and hold to move around</p>
-      <p>
-       Lorem ipsum.
-      </p>
-      <TheScene />
+            <p>
+                Lorem ipsum.
+            </p>
+            <TheScene />
         </div>
     )
 }
