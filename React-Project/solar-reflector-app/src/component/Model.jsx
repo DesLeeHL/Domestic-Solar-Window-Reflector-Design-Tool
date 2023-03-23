@@ -1,8 +1,11 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, OrthographicCamera } from "@react-three/drei";
 import { DoubleSide } from 'three';
+
+import getSunPosition from '../calc/SunPosition';
+import sunpos from "../calc/sunpos";
 
 function Model(props) {
     // This reference gives us direct access to the THREE.Mesh object
@@ -21,6 +24,38 @@ function Model(props) {
         top: 0,
         left: 0,
     };
+
+    useEffect(() => {
+        const location = [0, 0]; // Set your desired location
+        const refraction = true;
+        const results = [];
+
+        const startYear = 2022;
+        const endYear = 2023;
+        const startMonth = 10;
+        const endMonth = 3;
+        console.log("Start sunpos calc")
+        for (let year = startYear; year <= endYear; year++) {
+            const start = year === startYear ? startMonth : 1;
+            const end = year === endYear ? endMonth : 12;
+
+            for (let month = start; month <= end; month++) {
+                const daysInMonth = new Date(year, month, 0).getDate();
+
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const when = [year, month, day, 12, 0, 0, 0]; // Every day at noon, adjust the timezone as needed
+                    const [azimuth, elevation] = sunpos(when, location, refraction);
+                    results.push({
+                        date: `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`,
+                        azimuth,
+                        elevation
+                    });
+                }
+            }
+        }
+
+        console.log(results);
+    }, []); // Empty dependency array ensures this runs only once
 
     // const reflectorRotator=new THREE.Mesh({position:[0, -height / 2, 0], rotation:[-angle * (Math.PI / 180), 0, 0]})
 
