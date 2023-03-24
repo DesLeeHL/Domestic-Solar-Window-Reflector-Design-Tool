@@ -3,9 +3,10 @@ import { useFrame } from "@react-three/fiber";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, OrthographicCamera } from "@react-three/drei";
 import { DoubleSide } from 'three';
+import SunPosition from "../calc/SunPosition";
 
-import getSunPosition from '../calc/SunPosition';
 import sunpos from "../calc/sunpos";
+import { getSunTimes, getSunPos } from '../calc/suncalc';
 
 function Model(props) {
     // This reference gives us direct access to the THREE.Mesh object
@@ -25,37 +26,155 @@ function Model(props) {
         left: 0,
     };
 
+    // //SUNPOS and SunCal solar noon
+    // useEffect(() => {
+    //     const location = [0, -120]; // Set your desired location
+    //     const refraction = false;
+    //     const results = [];
+
+    //     const startYear = 2022;
+    //     const endYear = 2022;
+    //     const startMonth = 10;
+    //     const endMonth = 10;
+    //     console.log("SUNPOS")
+    //     for (let year = startYear; year <= endYear; year++) {
+    //         const start = year === startYear ? startMonth : 1;
+    //         const end = year === endYear ? endMonth : 12;
+
+    //         for (let month = start; month <= end; month++) {
+    //             const daysInMonth = new Date(Date.UTC(year, month, 0)).getDate();
+
+    //             for (let day = 1; day <= daysInMonth; day++) {
+    //                 const date = new Date(Date.UTC(year, month - 1, day + 1)); //idk why day+1
+    //                 const [solarNoon, sunriseEndTime, sunsetStartTime] = getSunTimes(date, location[0], location[1]);
+
+    //                 const hour = solarNoon.getUTCHours();
+    //                 const minute = solarNoon.getUTCMinutes();
+    //                 const second = solarNoon.getUTCSeconds();
+    //                 const timezone = 0; // Since we're working with UTC, the timezone offset is always 0
+
+    //                 const when = [year, month, day, hour, minute, second, timezone];
+    //                 // const when = [year, month, day, 12, 0, 0, timezone];
+
+    //                 // const [azimuthPre, elevationPre] = sunpos([year, month, day, hour, minute-2, second, timezone, location, refraction],location, refraction);
+    //                 // NOT REALLY SOLAR NOON, NEED TO OPTIMISE
+    //                 const [azimuth, elevation] = sunpos(when, location, refraction);
+    //                 // const [azimuthPost, elevationPost] = sunpos([year, month, day, hour, minute+2, second, timezone, location, refraction],location, refraction);
+
+    //                 const monthString = (month).toString().padStart(2, '0');
+    //                 results.push({
+    //                     date: `${year}-${monthString}-${day.toString().padStart(2, '0')}`,
+    //                     azimuth,
+    //                     elevation,
+    //                     timezone,
+    //                     solarNoon,
+    //                     sunriseEndTime, sunsetStartTime,
+    //                 });
+    //             }
+    //         }
+    //     }
+
+    //     console.log(results);
+    // }, []);
+
+    // //SUNCALC
+    // useEffect(() => {
+    //     const location = [0, -120]; // Set your desired location
+    //     const results = [];
+
+    //     const startYear = 2022;
+    //     const endYear = 2023;
+    //     const startMonth = 10;
+    //     const endMonth = 3;
+    //     console.log("SUNCALC")
+    //     for (let year = startYear; year <= endYear; year++) {
+    //         const start = year === startYear ? startMonth : 1;
+    //         const end = year === endYear ? endMonth : 12;
+
+    //         for (let month = start; month <= end; month++) {
+    //             const daysInMonth = new Date(Date.UTC(year, month, 0)).getDate();
+
+    //             for (let day = 1; day <= daysInMonth; day++) {
+    //                 const date = new Date(Date.UTC(year, month - 1, day + 1));
+    //                 const [solarNoon, sunriseEndTime, sunsetStartTime] = getSunTimes(date, location[0], location[1]);
+
+    //                 const hour = solarNoon.getUTCHours();
+    //                 const minute = solarNoon.getUTCMinutes();
+    //                 const second = solarNoon.getUTCSeconds();
+    //                 const timezone = -8; // Set the desired timezone offset
+
+    //                 // const when = [year, month, day, hour, minute, second, timezone];
+    //                 const when = new Date(year, month - 1, day, hour, minute, second);
+
+    //                 const [azimuth, elevation] = getSunPos(when, location[0], location[1]);
+
+    //                 const monthString = (month).toString().padStart(2, '0');
+    //                 results.push({
+    //                     date: `${year}-${monthString}-${day.toString().padStart(2, '0')}`,
+    //                     azimuth,
+    //                     elevation,
+    //                     timezone,
+    //                     solarNoon,
+    //                     sunriseEndTime, sunsetStartTime,
+    //                 });
+    //             }
+    //         }
+    //     }
+
+    //     console.log(results);
+    // }, []);
+
     useEffect(() => {
-        const location = [0, 0]; // Set your desired location
-        const refraction = true;
-        const results = [];
+        const date = new Date(2022, 10, 1); // Test for October 1, 2022
+        const latitude = 0;
+        const longitude = 0;
 
-        const startYear = 2022;
-        const endYear = 2023;
-        const startMonth = 10;
-        const endMonth = 3;
-        console.log("Start sunpos calc")
-        for (let year = startYear; year <= endYear; year++) {
-            const start = year === startYear ? startMonth : 1;
-            const end = year === endYear ? endMonth : 12;
+        const [solarNoon, sunriseEnd, sunsetStart] = getSunTimes(
+            date,
+            latitude,
+            longitude
+        );
 
-            for (let month = start; month <= end; month++) {
-                const daysInMonth = new Date(year, month, 0).getDate();
+        console.log("Test getSunTimes:");
+        console.log("Solar Noon:", solarNoon);
+        console.log("Sunrise End:", sunriseEnd);
+        console.log("Sunset Start:", sunsetStart);
+    }, []);
+    // //SUNCALC
 
-                for (let day = 1; day <= daysInMonth; day++) {
-                    const when = [year, month, day, 12, 0, 0, 0]; // Every day at noon, adjust the timezone as needed
-                    const [azimuth, elevation] = sunpos(when, location, refraction);
-                    results.push({
-                        date: `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`,
-                        azimuth,
-                        elevation
-                    });
-                }
-            }
-        }
+    // useEffect(() => {
+    //     const location = [0, 0]; // Set your desired location
+    //     const results = [];
 
-        console.log(results);
-    }, []); // Empty dependency array ensures this runs only once
+    //     const startYear = 2022;
+    //     const endYear = 2023;
+    //     const startMonth = 10;
+    //     const endMonth = 3;
+    //     console.log("SUNCALC (frm pkg)");
+
+    //     for (let year = startYear; year <= endYear; year++) {
+    //       const start = year === startYear ? startMonth : 1;
+    //       const end = year === endYear ? endMonth : 12;
+
+    //       for (let month = start; month <= end; month++) {
+    //         const daysInMonth = new Date(year, month, 0).getDate();
+
+    //         for (let day = 1; day <= daysInMonth; day++) {
+    //           const when = new Date(year, month - 1, day, 12, 0, 0); // Every day at noon, adjust the timezone as needed
+    //           const sunPos = getSunPos(when, location[0], location[1]);
+    //           const [azimuth, altitude] = [sunPos[0], sunPos[1]];
+
+    //           results.push({
+    //             date: `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`,
+    //             azimuth,
+    //             elevation: altitude
+    //           });
+    //         }
+    //       }
+    //     }
+
+    //     console.log(results);
+    //   }, []);
 
     // const reflectorRotator=new THREE.Mesh({position:[0, -height / 2, 0], rotation:[-angle * (Math.PI / 180), 0, 0]})
 
@@ -134,6 +253,9 @@ function Model(props) {
                     position={[10, 10, 100]}
                 />
             </Canvas>
+            <div className="App">
+                <SunPosition />
+            </div>
             <div style={{ display: "flex", flexDirection: "column" }}>
                 <div style={{ display: "flex", alignItems: "center" }}>
                     <label htmlFor="width-slider">Model Width:</label>
