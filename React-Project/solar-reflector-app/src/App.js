@@ -1,8 +1,4 @@
 import "./App.css";
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls, OrthographicCamera } from "@react-three/drei";
-import Cylinder3d from "./component/Cylinder3d";
-import Model from "./component/Model";
 import React, { useState } from 'react';
 import RangeSlider from './utils/RangeSlider';
 import MainScene from './component/MainScene';
@@ -11,6 +7,8 @@ import ErrorBoundary from "./utils/ErrorBoundary"
 function App() {
   const [windowWidth, setWindowWidth] = useState(10);
   const [windowHeight, setWindowHeight] = useState(10);
+  const [windowOrientation, setWindowOrientation] = useState(0);
+
   const [reflectorWidth, setReflectorWidth] = useState(20);
   const [reflectorLength, setReflectorLength] = useState(5);
   const [reflectorRotationX, setReflectorRotationX] = useState(90);
@@ -19,6 +17,10 @@ function App() {
   const [reflectorPosX, setReflectorPosX] = useState(0);
   const [reflectorPosY, setReflectorPosY] = useState(0);
   const [reflectorPosZ, setReflectorPosZ] = useState(-windowHeight / 2);
+
+  const [sunSize, setSunSize] = useState(10);
+  const [azimuth, setAzimuth] = useState(90);
+  const [elevation, setElevation] = useState(80);
 
   return (
     <>
@@ -32,18 +34,26 @@ function App() {
 
 
           <RangeSlider
-            label="Model Width:"
+            label="Window Width:"
             id="windowWidth-slider"
             min={1} max={20}
             value={windowWidth}
             onChange={(e) => setWindowWidth(e.target.value)}
           />
           <RangeSlider
-            label="Model Height:"
+            label="WIndow Height:"
             id="windowHeight-slider"
             min={1} max={20}
             value={windowHeight}
             onChange={(e) => setWindowHeight(e.target.value)}
+          />
+          <RangeSlider
+            label="Window Orientation"
+            id="window-orientation-slider"
+            min={0}
+            max={360}
+            value={windowOrientation}
+            onChange={(e) => setWindowOrientation(e.target.value)}
           />
           <RangeSlider
             label="Reflector Rotation X:"
@@ -113,18 +123,41 @@ function App() {
             value={reflectorPosZ}
             onChange={(e) => setReflectorPosZ(e.target.value)}
           />
-          <MainScene
-            windowWidth={windowWidth}
-            windowHeight={windowHeight}
-            reflectorWidth={reflectorWidth}
-            reflectorLength={reflectorLength}
-            reflectorRotationX={reflectorRotationX}
-            reflectorRotationY={reflectorRotationY}
-            reflectorRotationZ={reflectorRotationZ}
-            reflectorPosX={reflectorPosX}
-            reflectorPosY={reflectorPosY}
-            reflectorPosZ={reflectorPosZ}
+          <RangeSlider
+            label="Sun Size"
+            id="sun-size-slider"
+            min={0} max={100}
+            value={sunSize}
+            onChange={(e) => setSunSize(e.target.value)}
           />
+
+          <RangeSlider
+            label="Azimuth"
+            id="azimuth-slider"
+            min={0} max={360}
+            value={azimuth}
+            onChange={(e) => setAzimuth(e.target.value)}
+          />
+
+          <RangeSlider
+            label="Elevation"
+            id="elevation-slider"
+            min={-90} max={90}
+            value={elevation}
+            onChange={(e) => setElevation(e.target.value)}
+          />
+          {/* <div className="MainScene"> */}
+          <MainScene
+            windowWidth={windowWidth} windowHeight={windowHeight}
+            windowOrientation={windowOrientation}
+
+            reflectorWidth={reflectorWidth} reflectorLength={reflectorLength}
+            reflectorRotationX={reflectorRotationX} reflectorRotationY={reflectorRotationY} reflectorRotationZ={reflectorRotationZ}
+            reflectorPosX={reflectorPosX} reflectorPosY={reflectorPosY} reflectorPosZ={reflectorPosZ}
+            
+            sunSize={sunSize} azimuth={azimuth} elevation={elevation}
+          />
+          {/* </div> */}
         </div>
       </section>
     </>

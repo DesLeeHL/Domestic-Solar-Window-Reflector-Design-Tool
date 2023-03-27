@@ -2,24 +2,27 @@ import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import Window from './Window';
 import Reflector from './Reflector';
+import Sun from './Sun';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-
+import CustomAxesHelper from '../utils/CustomAxesHelper';
 const MainScene = ({
-    windowWidth,
-    windowHeight,
-    reflectorWidth,
-    reflectorLength,
-    reflectorRotationX,
-    reflectorRotationY,
-    reflectorRotationZ,
+    windowWidth, windowHeight,
+    windowOrientation,
+
+    reflectorWidth, reflectorLength,
+    reflectorRotationX, reflectorRotationY, reflectorRotationZ,
     reflectorPosX, reflectorPosY, reflectorPosZ,
+
+    sunSize, azimuth, elevation
 }) => {
     const mountRef = useRef(null);
     const windowObjRef = useRef();
     const reflectorObjRef = useRef();
+    const sunObjRef = useRef();
 
     useEffect(() => {
         const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x87CEEB); // Sky blue color
         const aspect = window.innerWidth / window.innerHeight;
         const cameraWidth = 20;
         const cameraHeight = cameraWidth / aspect;
@@ -45,20 +48,31 @@ const MainScene = ({
         renderer.setSize(window.innerWidth, window.innerHeight);
         mountRef.current.appendChild(renderer.domElement);
 
-        camera.position.z = 5;
+        camera.position.z = 50;
 
         const animate = () => {
             requestAnimationFrame(animate);
             renderer.render(scene, camera);
         };
+        // Add axes helper
+        const axesHelper = new THREE.AxesHelper(50); // Set the size of the helper (e.g., 5 units)
+        scene.add(axesHelper);
 
+        // // Add custom AxesHelper
+        // const axesLength = 5;
+        // const customAxesHelper = CustomAxesHelper(axesLength);
+        // scene.add(customAxesHelper);
+
+        //Window
         const windowObj = Window(
             windowWidth,
-            windowHeight
+            windowHeight,
+            windowOrientation,
         );
         windowObjRef.current = windowObj;
         scene.add(windowObj);
 
+        //Reflector
         const reflectorObj = Reflector(
             reflectorWidth,
             reflectorLength,
@@ -68,6 +82,13 @@ const MainScene = ({
         );
         reflectorObjRef.current = reflectorObj;
         scene.add(reflectorObj);
+
+        //Sun
+        const sunObj = Sun(
+            sunSize,
+        )
+        sunObjRef.current = sunObj;
+        scene.add(sunObj);
 
         // const light = new THREE.PointLight(0xffffff);
         // light.position.set(0, 0, 10);
@@ -88,8 +109,9 @@ const MainScene = ({
             const newWindowObj = Window(windowWidth, windowHeight);
             windowObjRef.current.geometry = newWindowObj.geometry;
             windowObjRef.current.material = newWindowObj.material;
+            windowObjRef.current.rotation.set(0, windowOrientation* (Math.PI / 180),0)
         }
-    }, [windowWidth, windowHeight]);
+    }, [windowWidth, windowHeight, windowOrientation]);
 
     useEffect(() => {
         if (reflectorObjRef.current) {
@@ -99,9 +121,9 @@ const MainScene = ({
 
             // Update the rotation and position
             reflectorObjRef.current.rotation.set(
-                reflectorRotationX * (Math.PI / 180),
-                reflectorRotationY * (Math.PI / 180),
-                reflectorRotationZ * (Math.PI / 180)
+                (reflectorRotationX) * (Math.PI / 180),
+                (reflectorRotationY) * (Math.PI / 180),
+                (reflectorRotationZ) * (Math.PI / 180)
             );
             reflectorObjRef.current.position.set(reflectorPosX, reflectorPosZ, reflectorPosY);
         }
@@ -111,10 +133,32 @@ const MainScene = ({
         reflectorRotationX,
         reflectorRotationY,
         reflectorRotationZ,
+        windowOrientation,
         reflectorPosX,
         reflectorPosY,
         reflectorPosZ,
     ]);
+
+    useEffect(() => {
+        if (sunObjRef.current) {
+            const newSunObj = Sun(sunSize); // diameter of the sun
+            sunObjRef.current.geometry = newSunObj.geometry;
+            sunObjRef.current.material = newSunObj.material;
+
+            // Calculate the position of the sun based on azimuth and elevation
+            const theta = azimuth * (Math.PI / 180);
+            const phi = (90 - elevation) * (Math.PI / 180);
+            const radius = 30; // distance from origin
+
+            const x = radius * Math.sin(phi) * Math.cos(theta);
+            const y = radius * Math.cos(phi);
+            const z = radius * Math.sin(phi) * Math.sin(theta);
+
+            // Update the position and rotation of the sun object
+            sunObjRef.current.position.set(x, y, z);
+            sunObjRef.current.lookAt(0, 0, 0);
+        }
+    }, [azimuth, elevation]);
 
     return <div ref={mountRef} />;
 };
