@@ -2,19 +2,27 @@ import { useState, useEffect } from 'react';
 import { getSunTimes } from './suncalc';
 import sunpos from './sunpos';
 
-const SunPosition = () => {
+const SunPosition = ({ setSunPositions }) => {
     const [mode, setMode] = useState('daily');
     const [results, setResults] = useState([]);
+
+    const [latitude, setLatitude] = useState(0);
+    const [longitude, setLongitude] = useState(-120);
+    const [startYear, setStartYear] = useState(2022);
+    const [endYear, setEndYear] = useState(2022);
+    const [startMonth, setStartMonth] = useState(10);
+    const [endMonth, setEndMonth] = useState(10);
+    const [timezone, setTimezone] = useState(-8);
 
     useEffect(() => {
         const refraction = false;
         const results = [];
-        const location = [0,-120];
-        const startYear = 2022;
-        const endYear = 2022;
-        const startMonth = 10;
-        const endMonth = 10;
-        const timezone = -8;
+        const location = [latitude, longitude];
+        // const startYear = 2022;
+        // const endYear = 2022;
+        // const startMonth = 10;
+        // const endMonth = 10;
+        // const timezone = -8;
         console.log("SUNPOS");
 
         const startDate = new Date(Date.UTC(startYear, startMonth - 1, 1));
@@ -64,20 +72,22 @@ const SunPosition = () => {
                 const [azimuth, elevation] = sunpos(when, location, refraction);
 
                 const monthString = (month).toString().padStart(2, '0');
-                const hourAdj = hour+timezone
+                const hourAdj = hour + timezone
                 results.push({
                     date: `${year}-${monthString}-${day.toString().padStart(2, '0')}`,
                     time: `${hourAdj.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`,
-                    
+
                     elevation,
                     azimuth,
                     timezone,
                 });
             }
         }
+        setResults(results);
+        setSunPositions(results);
 
         console.log(results);
-    }, [mode]);
+    }, [mode, latitude, longitude, startYear, endYear, startMonth, endMonth, timezone]);
 
     return (
         <div className="App">
@@ -85,7 +95,65 @@ const SunPosition = () => {
             <p>Select a mode:</p>
             <button onClick={() => setMode('daily')}>Daily</button>
             <button onClick={() => setMode('every5mins')}>Every 5 Minutes</button>
-            <ul>
+            <h2>Location</h2>
+            <label htmlFor="latitude">Latitude: </label>
+            <input
+                type="number"
+                id="latitude"
+                value={latitude}
+                onChange={(e) => setLatitude(parseFloat(e.target.value))}
+            />
+            <br />
+            <label htmlFor="longitude">Longitude: </label>
+            <input
+                type="number"
+                id="longitude"
+                value={longitude}
+                onChange={(e) => setLongitude(parseFloat(e.target.value))}
+            />
+
+            <h2>Date Range</h2>
+            <label htmlFor="startYear">Start Year: </label>
+            <input
+                type="number"
+                id="startYear"
+                value={startYear}
+                onChange={(e) => setStartYear(parseInt(e.target.value))}
+            />
+            <br />
+            <label htmlFor="endYear">End Year: </label>
+            <input
+                type="number"
+                id="endYear"
+                value={endYear}
+                onChange={(e) => setEndYear(parseInt(e.target.value))}
+            />
+            <br />
+            <label htmlFor="startMonth">Start Month: </label>
+            <input
+                type="number"
+                id="startMonth"
+                value={startMonth}
+                onChange={(e) => setStartMonth(parseInt(e.target.value))}
+            />
+            <br />
+            <label htmlFor="endMonth">End Month: </label>
+            <input
+                type="number"
+                id="endMonth"
+                value={endMonth}
+                onChange={(e) => setEndMonth(parseInt(e.target.value))}
+            />
+
+            <h2>Timezone</h2>
+            <label htmlFor="timezone">Timezone: </label>
+            <input
+                type="number"
+                id="timezone"
+                value={timezone}
+                onChange={(e) => setTimezone(parseFloat(e.target.value))}
+            />
+            {/* <ul>
                 {results.map((result, index) => (
                     <li key={index}>
                         {mode === 'daily'
@@ -98,7 +166,7 @@ const SunPosition = () => {
                             )}, Elevation: ${result.elevation.toFixed(2)}`}
                     </li>
                 ))}
-            </ul>
+            </ul> */}
         </div>);
 };
 
