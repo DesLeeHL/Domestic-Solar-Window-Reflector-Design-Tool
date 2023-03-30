@@ -13,7 +13,7 @@ const Sun = ({ sunSize }) => {
 
   // Create a sphere geometry and material
   const geometry = new THREE.SphereGeometry(sunSize, 32, 32);
-  const material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+  const material = new THREE.MeshBasicMaterial({ color: 0xFF9800 });
 
   // Create a mesh and position it at the calculated position
   const sunObj = new THREE.Mesh(geometry, material);

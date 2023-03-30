@@ -2,18 +2,28 @@ import { useState, useEffect } from 'react';
 import { getSunTimes } from './suncalc';
 import sunpos from './sunpos';
 
+
+
 const SunPosition = ({ setSunPositions }) => {
     const [mode, setMode] = useState('daily');
     const [results, setResults] = useState([]);
 
-    const [latitude, setLatitude] = useState(0);
-    const [longitude, setLongitude] = useState(-120);
+    const [latitude, setLatitude] = useState(53.343759213779215);
+    const [longitude, setLongitude] = useState(-6.250541536992013);
     const [startYear, setStartYear] = useState(2022);
     const [endYear, setEndYear] = useState(2022);
     const [startMonth, setStartMonth] = useState(10);
     const [endMonth, setEndMonth] = useState(10);
-    const [timezone, setTimezone] = useState(-8);
+    const [startDay, setStartDay] = useState(1);
+    const [endDay, setEndDay] = useState(31);
+    const [timezone, setTimezone] = useState(0);
+    // const [currYear, setCurrYear] = useState(2023)
+    // const [currMonth, setCurrMonth] = useState();
+    // const [currDay, setCurrDay] = useState();
 
+    const handleToggle = () => {
+        setMode(mode === 'daily' ? 'minutely' : 'daily');
+    }
     useEffect(() => {
         const refraction = false;
         const results = [];
@@ -25,8 +35,8 @@ const SunPosition = ({ setSunPositions }) => {
         // const timezone = -8;
         console.log("SUNPOS");
 
-        const startDate = new Date(Date.UTC(startYear, startMonth - 1, 1));
-        const endDate = new Date(Date.UTC(endYear, endMonth, 0));
+        const startDate = new Date(Date.UTC(startYear, startMonth - 1, startDay));
+        const endDate = new Date(Date.UTC(endYear, endMonth, endDay));
 
         if (mode === 'daily') {
             for (let d = startDate; d <= endDate; d.setDate(d.getDate() + 1)) {
@@ -35,7 +45,7 @@ const SunPosition = ({ setSunPositions }) => {
                 const day = d.getUTCDate();
 
                 const date = new Date(Date.UTC(year, month - 1, day + 1));
-                const [solarNoon, sunriseEndTime, sunsetStartTime] = getSunTimes(date, location[0], location[1]);
+                const [solarNoon, sunriseStartTime, sunsetEndTime] = getSunTimes(date, location[0], location[1]);
 
                 const hour = solarNoon.getUTCHours();
                 const minute = solarNoon.getUTCMinutes();
@@ -46,23 +56,27 @@ const SunPosition = ({ setSunPositions }) => {
                 const [azimuth, elevation] = sunpos(when, location, refraction);
 
                 const monthString = (month).toString().padStart(2, '0');
+                const hourAdj = hour + timezone
                 results.push({
                     date: `${year}-${monthString}-${day.toString().padStart(2, '0')}`,
+                    time: `${hourAdj.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`,
+                    timezone,
                     azimuth,
                     elevation,
-                    timezone,
+
                     solarNoon,
-                    sunriseEndTime, sunsetStartTime,
+                    sunriseStartTime, sunsetEndTime,
                 });
             }
-        } else if (mode === 'every5mins') {
-            const date = new Date(Date.UTC(startYear, startMonth - 1, 1));
-            const [sunriseEndTime, sunsetStartTime] = getSunTimes(date, location[0], location[1]).slice(1);
+        } else if (mode === 'minutely') {
+            const date = new Date(Date.UTC(endYear, endMonth - 1, endDay));
+            // const [sunriseStartTime, sunsetEndTime] = getSunTimes(date, location[0], location[1]).slice(1);
+            const [solarNoon, sunriseStartTime, sunsetEndTime] = getSunTimes(date, location[0], location[1]);
             const year = date.getUTCFullYear();
             const month = date.getUTCMonth() + 1;
             const day = date.getUTCDate();
 
-            for (let t = sunriseEndTime; t <= sunsetStartTime; t.setMinutes(t.getMinutes() + 5)) {
+            for (let t = sunriseStartTime; t <= sunsetEndTime; t.setMinutes(t.getMinutes() + 1)) {
                 const hour = t.getUTCHours();
                 const minute = t.getUTCMinutes();
                 const second = t.getUTCSeconds();
@@ -76,10 +90,12 @@ const SunPosition = ({ setSunPositions }) => {
                 results.push({
                     date: `${year}-${monthString}-${day.toString().padStart(2, '0')}`,
                     time: `${hourAdj.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`,
-
-                    elevation,
-                    azimuth,
                     timezone,
+                    azimuth,
+                    elevation,
+
+                    solarNoon,
+                    sunriseStartTime, sunsetEndTime,
                 });
             }
         }
@@ -93,8 +109,11 @@ const SunPosition = ({ setSunPositions }) => {
         <div className="App">
             <h1>Sun Position</h1>
             <p>Select a mode:</p>
-            <button onClick={() => setMode('daily')}>Daily</button>
-            <button onClick={() => setMode('every5mins')}>Every 5 Minutes</button>
+            {/* <button onClick={() => setMode('daily')}>Daily</button>
+            <button onClick={() => setMode(',minutely')}>Minutely (in 1 day)</button> */}
+            <button onClick={handleToggle}>
+                {mode === 'daily' ? 'Daily' : 'Minutely (in 1 day)'}
+            </button>
             <h2>Location</h2>
             <label htmlFor="latitude">Latitude: </label>
             <input
@@ -113,46 +132,94 @@ const SunPosition = ({ setSunPositions }) => {
             />
 
             <h2>Date Range</h2>
-            <label htmlFor="startYear">Start Year: </label>
-            <input
-                type="number"
-                id="startYear"
-                value={startYear}
-                onChange={(e) => setStartYear(parseInt(e.target.value))}
-            />
-            <br />
-            <label htmlFor="endYear">End Year: </label>
-            <input
-                type="number"
-                id="endYear"
-                value={endYear}
-                onChange={(e) => setEndYear(parseInt(e.target.value))}
-            />
-            <br />
-            <label htmlFor="startMonth">Start Month: </label>
-            <input
-                type="number"
-                id="startMonth"
-                value={startMonth}
-                onChange={(e) => setStartMonth(parseInt(e.target.value))}
-            />
-            <br />
-            <label htmlFor="endMonth">End Month: </label>
-            <input
-                type="number"
-                id="endMonth"
-                value={endMonth}
-                onChange={(e) => setEndMonth(parseInt(e.target.value))}
-            />
+            {mode === 'daily' ? (
+                <>
+                    <label htmlFor="startYear">Start Year: </label>
+                    <div className="TextInput">
 
-            <h2>Timezone</h2>
+                    </div>
+                    <div className="TextInput">
+                        <input
+                            type="number"
+                            id="startYear"
+                            value={startYear}
+                            onChange={(e) => setStartYear(parseInt(e.target.value))}
+                        />
+                    </div>
+
+                    <label htmlFor="startMonth">Start Month: </label>
+                    <input
+                        type="number"
+                        id="startYear"
+                        value={startMonth}
+                        onChange={(e) => setStartMonth(parseInt(e.target.value))}
+                    /><label htmlFor="startYear">Start Day: </label>
+                    <input
+                        type="number"
+                        id="startYear"
+                        value={startDay}
+                        onChange={(e) => setStartDay(parseInt(e.target.value))}
+                    />
+                    <br />
+                    <label htmlFor="endYear">End Year: </label>
+                    <input
+                        type="number"
+                        id="endYear"
+                        value={endYear}
+                        onChange={(e) => setEndYear(parseInt(e.target.value))}
+                    />
+                    <label htmlFor="endMonth">End Month: </label>
+                    <input
+                        type="number"
+                        id="endYear"
+                        value={endMonth}
+                        onChange={(e) => setEndMonth(parseInt(e.target.value))}
+                    /><label htmlFor="endDay">End Day: </label>
+                    <input
+                        type="number"
+                        id="endDay"
+                        value={endDay}
+                        onChange={(e) => setEndDay(parseInt(e.target.value))}
+                    />
+                    <br />
+                </>
+            ) :
+                (
+                    <>
+                        <br />
+                        <label htmlFor="Year">Year: </label>
+                        <input
+                            type="number"
+                            id="Year"
+                            value={endYear}
+                            onChange={(e) => setEndYear(parseInt(e.target.value))}
+                        />
+                        <label htmlFor="Month">Month: </label>
+                        <input
+                            type="number"
+                            id="Year"
+                            value={endMonth}
+                            onChange={(e) => setEndMonth(parseInt(e.target.value))}
+                        /><label htmlFor="Day">Day: </label>
+                        <input
+                            type="number"
+                            id="Day"
+                            value={endDay}
+                            onChange={(e) => setEndDay(parseInt(e.target.value))}
+                        />
+                        <br />
+                    </>
+                )
+            }
+
+            {/* <h2>Timezone</h2>
             <label htmlFor="timezone">Timezone: </label>
             <input
                 type="number"
                 id="timezone"
                 value={timezone}
                 onChange={(e) => setTimezone(parseFloat(e.target.value))}
-            />
+            /> */}
             {/* <ul>
                 {results.map((result, index) => (
                     <li key={index}>

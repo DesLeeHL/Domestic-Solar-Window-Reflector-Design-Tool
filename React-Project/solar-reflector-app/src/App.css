@@ -31,6 +31,7 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  margin: 5;
 }
 
 .App-link {
@@ -38,15 +39,29 @@
 }
 
 .MainScene {
-  width: 800px;
-  height: 600px;
+  width: 70%;
+  /* height: 600px; */
+  display: inline-block;
   margin: 0 auto;
+}
+
+.Controls {
+  width: 30%;
+  /* height: 80%; */
+  display: inline-block;
+  margin-left: 5;
+
+}
+
+.TextInput {
+  width: 5;
 }
 
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
