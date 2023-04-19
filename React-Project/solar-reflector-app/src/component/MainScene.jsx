@@ -4,7 +4,7 @@ import Window from './Window';
 import Reflector from './Reflector';
 import Sun from './Sun';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import CustomAxesHelper from '../utils/CustomAxesHelper';
+// import CustomAxesHelper from '../utils/CustomAxesHelper';
 
 const MainScene = ({
     windowWidth, windowHeight,
