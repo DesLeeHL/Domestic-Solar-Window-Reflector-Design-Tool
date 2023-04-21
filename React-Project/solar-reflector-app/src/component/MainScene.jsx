@@ -5,6 +5,7 @@ import Reflector from './Reflector';
 import Sun from './Sun';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 // import CustomAxesHelper from '../utils/CustomAxesHelper';
+import { Canvas, extend, useThree, useFrame } from '@react-three/fiber'
 
 const MainScene = ({
     windowWidth, windowHeight,
@@ -27,7 +28,7 @@ const MainScene = ({
     const sceneRef = useRef();
 
 
-    //SUN LINES (WORKING)
+    //SUN LINES
     const updateSunlightLines = (scene, reflectorObj, sunlightLinesGroupRef, azimuth, elevation) => {
         if (!reflectorObj) {
             return;
@@ -49,7 +50,7 @@ const MainScene = ({
         const group = new THREE.Group();
 
         const lineSunlightMaterial = new THREE.LineBasicMaterial({ color: 0xFF9800 });
-        const lineReflectedMaterial = new THREE.LineBasicMaterial({ color: 0xffeb3b})
+        const lineReflectedMaterial = new THREE.LineBasicMaterial({ color: 0xffeb3b })
 
         // Calculate the corners of the reflector
         const reflectorCorners = [new THREE.Vector3(-reflectorWidth / 2, reflectorLength / 2, 0), new THREE.Vector3(reflectorWidth / 2, reflectorLength / 2, 0), new THREE.Vector3(-reflectorWidth / 2, -reflectorLength / 2, 0), new THREE.Vector3(reflectorWidth / 2, -reflectorLength / 2, 0),];
@@ -88,10 +89,6 @@ const MainScene = ({
         sunlightLinesGroupRef.current = group;
         scene.add(group);
     };
-
-    // //SUN LINES TEST
-
-
 
     //Init scene
     useEffect(() => {
@@ -261,7 +258,15 @@ const MainScene = ({
         }
     }, [azimuth, elevation]);
 
-    return <div ref={mountRef} />;
+    return (
+        <Canvas>
+            <div
+                className="viewport"
+                style={{ flex: "1 1 auto", width: "5%", height: "5%", oveflow: "hidden" }}
+                ref={mountRef}
+            />
+        </Canvas>
+    );
 
 };
 

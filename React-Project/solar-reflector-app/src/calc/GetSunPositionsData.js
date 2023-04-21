@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { getSunTimes } from './suncalc';
 import sunpos from './sunpos';
 
-function SunPosition({
+function GetSunPositionsData({
     setSunPositions,
     latitude,
     longitude,
@@ -92,4 +92,4 @@ function SunPosition({
     return null;
 };
 
-export default SunPosition;
+export default GetSunPositionsData;

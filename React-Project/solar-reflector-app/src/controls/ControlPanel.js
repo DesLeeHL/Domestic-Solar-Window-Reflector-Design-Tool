@@ -1,7 +1,7 @@
 import React from 'react';
 import RangeSlider from '../utils/RangeSlider';
-import SunPosition from '../calc/SunPosition';
-import SunPositionControls from "./SunPositionControls";
+import GetSunPositionsData from '../calc/GetSunPositionsData';
+import GetSunPositionsDataControls from "./GetSunPositionsDataControls";
 import ErrorBoundary from "../utils/ErrorBoundary"
 
 const ControlPanel = ({
@@ -69,7 +69,7 @@ const ControlPanel = ({
                 timezone={timezone}
                 setTimezone={setTimezone}
               /> */}
-                <SunPositionControls
+                <GetSunPositionsDataControls
                     mode={mode}
                     setMode={setMode}
                     startYear={startYear}
@@ -86,7 +86,7 @@ const ControlPanel = ({
                     setEndDay={setEndDay}
                     setSunPositions={setSunPositions}
                 />
-                <SunPosition
+                <GetSunPositionsData
                     setSunPositions={setSunPositions}
                     latitude={latitude}
                     setLatitude={setLatitude}

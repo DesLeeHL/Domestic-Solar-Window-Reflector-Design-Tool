@@ -1,9 +1,7 @@
 import "./App.css";
 import React, { useState, useEffect } from 'react';
-// import RangeSlider from './utils/RangeSlider';
 import MainScene from './component/MainScene';
-// import SunPosition from "./calc/SunPosition";
-// import SunPositionControls from "./controls/SunPositionControls";
+
 // import ErrorBoundary from "./utils/ErrorBoundary"
 
 import ControlPanel from "./controls/ControlPanel";
