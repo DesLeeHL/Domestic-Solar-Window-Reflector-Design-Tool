@@ -5,6 +5,8 @@ import Reflector from './Reflector';
 import Sun from './Sun';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 // import CustomAxesHelper from '../utils/CustomAxesHelper';
+import { lineIntersection, convexHull, polygonArea } from '../utils/IntersectionCalcs';
+
 
 const MainScene = ({
     windowWidth, windowHeight,
@@ -14,7 +16,9 @@ const MainScene = ({
     reflectorRotationX, reflectorRotationY, reflectorRotationZ,
     reflectorPosX, reflectorPosY, reflectorPosZ,
 
-    sunSize, azimuth, elevation
+    sunSize, azimuth, elevation,
+
+    currArea, setCurrArea
 }) => {
     const mountRef = useRef(null);
     const windowObjRef = useRef();
@@ -22,10 +26,21 @@ const MainScene = ({
     const sunObjRef = useRef();
     const sunlightLinesObjRef = useRef();
     const sunlightLinesGroupRef = useRef();
-
     // // let scene; // Declare the 'scene' variable here
     const sceneRef = useRef();
 
+    //get window edges
+    const getWindowEdges = (windowObj) => {
+        const edges = [];
+        const geometry = windowObj.geometry;
+        geometry.faces.forEach(face => {
+            edges.push([geometry.vertices[face.a], geometry.vertices[face.b]]);
+            edges.push([geometry.vertices[face.b], geometry.vertices[face.c]]);
+            edges.push([geometry.vertices[face.c], geometry.vertices[face.a]]);
+        });
+
+        return edges;
+    };
 
     //SUN LINES (WORKING)
     const updateSunlightLines = (scene, reflectorObj, sunlightLinesGroupRef, azimuth, elevation) => {
@@ -49,7 +64,7 @@ const MainScene = ({
         const group = new THREE.Group();
 
         const lineSunlightMaterial = new THREE.LineBasicMaterial({ color: 0xFF9800 });
-        const lineReflectedMaterial = new THREE.LineBasicMaterial({ color: 0xffeb3b})
+        const lineReflectedMaterial = new THREE.LineBasicMaterial({ color: 0xffeb3b })
 
         // Calculate the corners of the reflector
         const reflectorCorners = [new THREE.Vector3(-reflectorWidth / 2, reflectorLength / 2, 0), new THREE.Vector3(reflectorWidth / 2, reflectorLength / 2, 0), new THREE.Vector3(-reflectorWidth / 2, -reflectorLength / 2, 0), new THREE.Vector3(reflectorWidth / 2, -reflectorLength / 2, 0),];
@@ -87,6 +102,32 @@ const MainScene = ({
 
         sunlightLinesGroupRef.current = group;
         scene.add(group);
+
+        //calc intersection
+        const intersectionPoints = [];
+
+        sunlightLinesGroupRef.current.children.forEach((sunlightLine) => {
+            const windowEdges = getWindowEdges(windowObjRef.current);
+            windowEdges.forEach((windowEdge) => {
+                const intersection = lineIntersection(sunlightLine.geometry.vertices[0], sunlightLine.geometry.vertices[1], windowEdge[0], windowEdge[1]);
+                if (intersection) {
+                    intersectionPoints.push(intersection);
+                }
+            });
+        });
+
+        const hull = convexHull(intersectionPoints);
+        const area = polygonArea(hull);
+        setCurrArea(area);
+
+        const areaTextMesh = createTextMesh(`Area: ${area.toFixed(2)} m²`, new THREE.Vector3(0, 10, 0));
+        const areaTextMeshRef = useRef();
+
+        if (areaTextMeshRef.current) {
+            scene.remove(areaTextMeshRef.current);
+        }
+        areaTextMeshRef.current = areaTextMesh;
+        scene.add(areaTextMesh);
     };
 
     // //SUN LINES TEST

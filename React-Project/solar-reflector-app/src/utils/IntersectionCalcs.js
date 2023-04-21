@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import { lineIntersection, convexHull, polygonArea } from './IntersectionCalcs';
 
 const pointInPolygon = (point, polygonVertices) => {
     let crossings = 0;

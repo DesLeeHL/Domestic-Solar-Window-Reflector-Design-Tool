@@ -132,6 +132,7 @@ const ControlPanel = ({
                 id="windowWidth-slider"
                 min={1} max={20}
                 value={windowWidth}
+                unit="m"
                 onChange={(e) => setWindowWidth(e.target.value)}
             />
             <RangeSlider
@@ -139,6 +140,7 @@ const ControlPanel = ({
                 id="windowHeight-slider"
                 min={1} max={20}
                 value={windowHeight}
+                unit="m"
                 onChange={(e) => setWindowHeight(e.target.value)}
             />
             <RangeSlider
@@ -147,6 +149,7 @@ const ControlPanel = ({
                 min={0}
                 max={360}
                 value={windowOrientation}
+                unit="°"
                 onChange={(e) => setWindowOrientation(e.target.value)}
             />
             <RangeSlider
@@ -155,6 +158,7 @@ const ControlPanel = ({
                 min={0}
                 max={360}
                 value={reflectorRotationX}
+                unit="°"
                 onChange={(e) => setReflectorRotationX(e.target.value)}
             />
 
@@ -164,6 +168,7 @@ const ControlPanel = ({
                 min={-180}
                 max={180}
                 value={reflectorRotationY}
+                unit="°"
                 onChange={(e) => setReflectorRotationY(e.target.value)}
             />
 
@@ -173,6 +178,7 @@ const ControlPanel = ({
                 min={-180}
                 max={180}
                 value={reflectorRotationZ}
+                unit="°"
                 onChange={(e) => setReflectorRotationZ(e.target.value)}
             />
 
@@ -182,6 +188,7 @@ const ControlPanel = ({
                 id="reflector-width-slider"
                 min={0} max={20}
                 value={reflectorWidth}
+                unit="m"
                 onChange={(e) => setReflectorWidth(e.target.value)}
             />
             <RangeSlider
@@ -189,6 +196,7 @@ const ControlPanel = ({
                 id="reflector-length-slider"
                 min={0} max={20}
                 value={reflectorLength}
+                unit="m"
                 onChange={(e) => setReflectorLength(e.target.value)}
             />
             <RangeSlider
@@ -197,6 +205,7 @@ const ControlPanel = ({
                 min={-20}
                 max={20}
                 value={reflectorPosX}
+                unit="m"
                 onChange={(e) => setReflectorPosX(e.target.value)}
             />
 
@@ -206,6 +215,7 @@ const ControlPanel = ({
                 min={-20}
                 max={20}
                 value={reflectorPosY}
+                unit="m"
                 onChange={(e) => setReflectorPosY(e.target.value)}
             />
 
@@ -215,6 +225,7 @@ const ControlPanel = ({
                 min={-20}
                 max={20}
                 value={reflectorPosZ}
+                unit="m"
                 onChange={(e) => setReflectorPosZ(e.target.value)}
             />
             <RangeSlider
@@ -230,6 +241,7 @@ const ControlPanel = ({
                 id="azimuth-slider"
                 min={0} max={360}
                 value={azimuth}
+                unit="°"
                 onChange={(e) => setAzimuth(e.target.value)}
             />
 
@@ -238,6 +250,7 @@ const ControlPanel = ({
                 id="elevation-slider"
                 min={-90} max={90}
                 value={elevation}
+                unit="°"
                 onChange={(e) => setElevation(e.target.value)}
             />
         </div>

@@ -46,6 +46,17 @@ function App() {
   const [endMonth, setEndMonth] = useState(new Date().getMonth() + 2);
   const [endDay, setEndDay] = useState(new Date().getDate());
 
+  const [currArea, setCurrArea] = useState();
+  const [averageArea, setAverageArea] = useState(0);
+
+  // const handleAreaUpdate = (newArea, sunPositions) => {
+  //   // Update the average area here based on the new area
+  //   //
+  //   const iterations = sunPositions.size;
+  //   setAverageArea((prevAverageArea) => {
+  //     return (prevAverageArea * (iterations - 1) + newArea) / iterations;
+  //   });
+  // };
   function DateTimeInfo({ date, time, solarNoon, sunrise, sunset }) {
     return (
       <div>
@@ -69,8 +80,9 @@ function App() {
     );
   }
 
-  const updateSunPosition = (sunPositions, renderInterval) => {
+  const simulateSunMovement = (sunPositions, renderInterval) => {
     let updateInterval;
+    let totalArea = 0;
 
     const updateAtIndex = (index) => {
       if (index < sunPositions.length) {
@@ -84,6 +96,13 @@ function App() {
         setSunset(position.sunsetEndTime);
         setLatitude(position.latitude);
         setLongitude(position.longitude);
+
+        // Update the area for the current sun position
+        totalArea += currArea; // Assuming 'area' is a property of each sunPosition object
+
+        // Update the average area
+        const newAverageArea = totalArea / (index + 1);
+        setAverageArea(newAverageArea);
 
         updateInterval = setTimeout(() => updateAtIndex(index + 1), renderInterval);
       }
@@ -135,7 +154,7 @@ function App() {
 
 
   //   // update azimuth and elevation based on sunPositions
-  //   const updateSunPositionData = () => {
+  //   const simulateSunMovementData = () => {
   //     sunPositions.forEach((position, index) => {
   //       setTimeout(() => {
   //         setAzimuth(position.azimuth);
@@ -151,19 +170,19 @@ function App() {
   //     });
   //   };
   //   // run the function on button click
-  //   const updateSunPositionDataOnClick = () => {
+  //   const simulateSunMovementDataOnClick = () => {
   //     if (sunPositions.length > 0) {
-  //       updateSunPositionData();
+  //       simulateSunMovementData();
   //       console.log("Render rate: " + renderInterval)
   //     } else {
   //       alert("No sun position data available");
   //     }
   //   };
   //   // register the function to window object
-  //   window.updateSunPositionDataOnClick = updateSunPositionDataOnClick;
+  //   window.simulateSunMovementDataOnClick = simulateSunMovementDataOnClick;
   //   // clean up function to remove the function from window object
   //   return () => {
-  //     delete window.updateSunPositionDataOnClick;
+  //     delete window.simulateSunMovementDataOnClick;
   //   }
   // }, [sunPositions,renderInterval]);
 
@@ -208,7 +227,7 @@ function App() {
                 // date={date} time={time} solarNoon={solarNoon} sunrise={sunrise} sunset={sunset}
                 // getCurrentLocation={getCurrentLocation}
                 renderInterval={renderInterval} setRenderInterval={setRenderInterval}
-                updateSunPosition={() => updateSunPosition(sunPositions, renderInterval)}
+                simulateSunMovement={() => simulateSunMovement(sunPositions, renderInterval)}
               />
               <DateTimeInfo
                 date={currentDate}
@@ -223,6 +242,9 @@ function App() {
                 longitude={longitude}
                 timezone={timezone}
               />
+              <div>
+                Average Area: {averageArea.toFixed(3)} m²
+              </div>
             </div>
             <div className="MainScene">
               <MainScene
@@ -234,6 +256,7 @@ function App() {
                 reflectorPosX={reflectorPosX} reflectorPosY={reflectorPosY} reflectorPosZ={reflectorPosZ}
 
                 sunSize={sunSize} azimuth={azimuth} elevation={elevation}
+                currArea={currArea} setCurrArea={setCurrArea}
               />
             </div>
           </section>
