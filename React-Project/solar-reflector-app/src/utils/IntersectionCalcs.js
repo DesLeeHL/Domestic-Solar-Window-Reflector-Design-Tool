@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
-function lineIntersection(p1, p2, p3, p4){
+function lineIntersection(p1, p2, p3, p4) {
     const d = (p2.x - p1.x) * (p4.y - p3.y) - (p2.y - p1.y) * (p4.x - p3.x);
     if (d === 0) {
         return null;

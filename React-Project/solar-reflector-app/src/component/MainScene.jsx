@@ -18,7 +18,7 @@ const MainScene = ({
 
     sunSize, azimuth, elevation,
 
-    // currArea, setCurrArea
+    currArea, setCurrArea
 }) => {
     const mountRef = useRef(null);
     const windowObjRef = useRef();
@@ -103,25 +103,25 @@ const MainScene = ({
         sunlightLinesGroupRef.current = group;
         scene.add(group);
 
-        // //calc intersection
-        // const intersectionPoints = [];
+        //calc intersection
+        const intersectionPoints = [];
 
-        // sunlightLinesGroupRef.current.children.forEach((sunlightLine) => {
-        //     const windowEdges = getWindowEdges(windowObjRef.current);
-        //     windowEdges.forEach((windowEdge) => {
-        //         const intersection = lineIntersection(sunlightLine.geometry.vertices[0], sunlightLine.geometry.vertices[1], windowEdge[0], windowEdge[1]);
-        //         if (intersection) {
-        //             intersectionPoints.push(intersection);
-        //         }
-        //     });
-        // });
-        // // Calculate the convex hull and the area of the intersection polygon
-        // if (intersectionPoints.length > 0) {
-        //     const hull = convexHull(intersectionPoints);
-        //     const area = polygonArea(hull);
-        //     setCurrArea(area);
-        //     console.log("Intersection area (m^2):", area);
-        // }
+        sunlightLinesGroupRef.current.children.forEach((sunlightLine) => {
+            const windowEdges = getWindowEdges(windowObjRef.current);
+            windowEdges.forEach((windowEdge) => {
+                const intersection = lineIntersection(sunlightLine.geometry.vertices[0], sunlightLine.geometry.vertices[1], windowEdge[0], windowEdge[1]);
+                if (intersection) {
+                    intersectionPoints.push(intersection);
+                }
+            });
+        });
+        // Calculate the convex hull and the area of the intersection polygon
+        if (intersectionPoints.length > 0) {
+            const hull = convexHull(intersectionPoints);
+            const area = polygonArea(hull);
+            setCurrArea(area);
+            console.log("Intersection area (m^2):", area);
+        }
 
     };
 

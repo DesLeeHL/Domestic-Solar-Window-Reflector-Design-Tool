@@ -83,16 +83,7 @@ const ControlPanel = ({
                     />
                     <FormHelperText id="outlined-helper-text">Longitude{windowHeight > 0 ? "" : "must be greater than 0!"}</FormHelperText>
                 </FormControl>
-                <ErrorBoundary>
-                    {/* <SunPosition
-                setSunPositions={setSunPositions}
-                latitude={latitude}
-                setLatitude={setLatitude}
-                longitude={longitude}
-                setLongitude={setLongitude}
-                timezone={timezone}
-                setTimezone={setTimezone}
-              /> */}
+                {/* <ErrorBoundary> */}
                     <GetSunPositionsDataControls
                         mode={mode}
                         setMode={setMode}
@@ -126,7 +117,7 @@ const ControlPanel = ({
                         startDay={startDay}
                         endDay={endDay}
                     />
-                </ErrorBoundary>
+                {/* </ErrorBoundary> */}
 
                 <FormControl sx={{ m: 1, width: '10ch' }} size="small">
                     <InputLabel id="demo-select-small-label">Timezone</InputLabel>
@@ -281,7 +272,7 @@ const ControlPanel = ({
                     <FormHelperText id="outlined-reflector-z-helper-text">Reflector Z Position</FormHelperText>
                 </FormControl>
                 <br />
-                <h2>Sunlight Movement Simulation<br/>and<br/>Reflected Light Area Computation</h2>
+                <h2>Sunlight Movement Simulation<br />and<br />Reflected Light Area Computation</h2>
                 <FormControl sx={{ m: 1, width: '15ch' }} variant="outlined">
                     <OutlinedInput
                         id="outlined-adornment-render-interval"

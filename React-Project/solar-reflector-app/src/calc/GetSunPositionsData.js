@@ -80,7 +80,6 @@ function GetSunPositionsData({
                 });
             }
         }
-        // setResults(results);
         setSunPositions(results);
 
         console.log(results);

@@ -254,7 +254,7 @@ function App() {
                   latitude={latitude}
                   longitude={longitude}
                 />
-                 <h2>Average Area of Reflected Light Reaching Window </h2>
+                <h2>Average Area of Reflected Light Reaching Window </h2>
                 {/* <h2>{averageArea}㎡</h2> */}
                 <h2>1.324㎡</h2>
               </Grid>
