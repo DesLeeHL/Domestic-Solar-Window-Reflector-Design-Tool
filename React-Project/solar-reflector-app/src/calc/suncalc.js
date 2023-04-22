@@ -28,5 +28,4 @@ export function getSunPos(/*Date*/ timeAndDate, /*Number*/ latitude, /*Number*/ 
   const azimuthDegAdj = intoRange(azimuthDeg, 0, 360);
   const elevationDegAdj = intoRange(elevationDeg, -180, 180);
   return [azimuthDegAdj, elevationDegAdj]
-
 }

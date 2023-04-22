@@ -1,11 +1,12 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import * as THREE from 'three';
 import Window from './Window';
 import Reflector from './Reflector';
 import Sun from './Sun';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 // import CustomAxesHelper from '../utils/CustomAxesHelper';
-import { Canvas, extend, useThree, useFrame } from '@react-three/fiber'
+import { lineIntersection, convexHull, polygonArea } from '../utils/IntersectionCalcs';
+import { Resizer } from '../utils/Resizer';
 
 const MainScene = ({
     windowWidth, windowHeight,
@@ -15,7 +16,9 @@ const MainScene = ({
     reflectorRotationX, reflectorRotationY, reflectorRotationZ,
     reflectorPosX, reflectorPosY, reflectorPosZ,
 
-    sunSize, azimuth, elevation
+    sunSize, azimuth, elevation,
+
+    // currArea, setCurrArea
 }) => {
     const mountRef = useRef(null);
     const windowObjRef = useRef();
@@ -23,12 +26,23 @@ const MainScene = ({
     const sunObjRef = useRef();
     const sunlightLinesObjRef = useRef();
     const sunlightLinesGroupRef = useRef();
-
     // // let scene; // Declare the 'scene' variable here
     const sceneRef = useRef();
 
+    //get window edges
+    const getWindowEdges = (windowObj) => {
+        const edges = [];
+        const geometry = windowObj.geometry;
+        geometry.faces.forEach(face => {
+            edges.push([geometry.vertices[face.a], geometry.vertices[face.b]]);
+            edges.push([geometry.vertices[face.b], geometry.vertices[face.c]]);
+            edges.push([geometry.vertices[face.c], geometry.vertices[face.a]]);
+        });
 
-    //SUN LINES
+        return edges;
+    };
+
+    //SUN LINES (WORKING)
     const updateSunlightLines = (scene, reflectorObj, sunlightLinesGroupRef, azimuth, elevation) => {
         if (!reflectorObj) {
             return;
@@ -88,7 +102,29 @@ const MainScene = ({
 
         sunlightLinesGroupRef.current = group;
         scene.add(group);
+
+        // //calc intersection
+        // const intersectionPoints = [];
+
+        // sunlightLinesGroupRef.current.children.forEach((sunlightLine) => {
+        //     const windowEdges = getWindowEdges(windowObjRef.current);
+        //     windowEdges.forEach((windowEdge) => {
+        //         const intersection = lineIntersection(sunlightLine.geometry.vertices[0], sunlightLine.geometry.vertices[1], windowEdge[0], windowEdge[1]);
+        //         if (intersection) {
+        //             intersectionPoints.push(intersection);
+        //         }
+        //     });
+        // });
+        // // Calculate the convex hull and the area of the intersection polygon
+        // if (intersectionPoints.length > 0) {
+        //     const hull = convexHull(intersectionPoints);
+        //     const area = polygonArea(hull);
+        //     setCurrArea(area);
+        //     console.log("Intersection area (m^2):", area);
+        // }
+
     };
+
 
     //Init scene
     useEffect(() => {
@@ -160,7 +196,7 @@ const MainScene = ({
         sceneRef.current.add(sunObj);
 
         if (sceneRef.current) {
-            updateSunlightLines(sceneRef.current);
+            updateSunlightLines(sceneRef.current, reflectorObjRef.current, sunlightLinesGroupRef, azimuth, elevation);
         }
 
         const light = new THREE.AmbientLight(0xffffff);
@@ -168,12 +204,22 @@ const MainScene = ({
 
         animate();
 
+        // // Call the onResize function and pass the required arguments
+        // onResize(mountRef.current, camera, renderer);
+        
         return () => {
             mountRef.current.removeChild(renderer.domElement);
             sceneRef.current.remove(windowObj);
             sceneRef.current.remove(reflectorObj);
         };
-    }, []);
+    }, [
+        // windowWidth, windowHeight, windowOrientation,
+        // reflectorWidth, reflectorLength,
+        // reflectorRotationX, reflectorRotationY, reflectorRotationZ,
+        // reflectorPosX,reflectorPosY, reflectorPosZ,
+        // azimuth, elevation, sunSize,
+        // updateSunlightLines,
+    ]);
 
     //Render Window
     useEffect(() => {
@@ -229,7 +275,8 @@ const MainScene = ({
         reflectorPosX,
         reflectorPosY,
         reflectorPosZ,
-        azimuth, elevation
+        azimuth, elevation,
+        // updateSunlightLines
     ]);
 
     //render Sun
@@ -256,17 +303,15 @@ const MainScene = ({
                 sunlightLinesObjRef.current.position.set(x, y, z);
             }
         }
-    }, [azimuth, elevation]);
+    }, [azimuth, elevation, sunSize]);
 
-    return (
-        <Canvas>
-            <div
-                className="viewport"
-                style={{ flex: "1 1 auto", width: "5%", height: "5%", oveflow: "hidden" }}
-                ref={mountRef}
-            />
-        </Canvas>
-    );
+    function onResize(container, camera, renderer) {
+        const resizer = new Resizer(container, camera, renderer);
+        resizer.onResize = () => {
+            this.render();
+        };
+    }
+    return <div ref={mountRef} />;
 
 };
 
